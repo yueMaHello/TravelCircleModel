@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="899e5cbc-189c-49bf-ba87-5736ec67466a" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/javascripts/circleTest.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/javascripts/circleTest.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/stylesheets/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/stylesheets/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/index.jade" beforeDir="false" afterPath="$PROJECT_DIR$/views/index.jade" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/javascripts/test.js" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -19,20 +16,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="test.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/javascripts/test.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
-              <caret line="293" column="49" selection-start-line="293" selection-start-column="49" selection-end-line="293" selection-end-column="49" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="circleTest.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/public/javascripts/circleTest.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="156">
-              <caret line="128" column="36" lean-forward="true" selection-start-line="128" selection-start-column="36" selection-end-line="128" selection-end-column="36" />
+            <state relative-caret-position="266">
+              <caret line="133" column="52" lean-forward="true" selection-start-line="133" selection-start-column="52" selection-end-line="133" selection-end-column="52" />
               <folding>
                 <marker date="1537563424033" expanded="true" signature="7629:7723" ph="..." />
               </folding>
@@ -272,21 +260,22 @@
       <workItem from="1532536896702" duration="10698000" />
       <workItem from="1536861124275" duration="15911000" />
       <workItem from="1537464225584" duration="12288000" />
-      <workItem from="1537549091420" duration="6534000" />
+      <workItem from="1537549091420" duration="6624000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="55886000" />
+    <option name="totallyTimeSpent" value="55976000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.27447918" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.27447918" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.4625132" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -299,7 +288,6 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info active="true" anchor="bottom" id="Find" order="1" visible="true" weight="0.087645195" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -605,8 +593,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/public/javascripts/circleTest.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="156">
-          <caret line="128" column="36" lean-forward="true" selection-start-line="128" selection-start-column="36" selection-end-line="128" selection-end-column="36" />
+        <state relative-caret-position="266">
+          <caret line="133" column="52" lean-forward="true" selection-start-line="133" selection-start-column="52" selection-end-line="133" selection-end-column="52" />
           <folding>
             <marker date="1537563424033" expanded="true" signature="7629:7723" ph="..." />
           </folding>
