@@ -1,0 +1,163 @@
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Calibri;
+}
+h1{
+  text-align: center
+}
+
+.switch {
+  position: absolute;
+  display: inline-block;
+  width: 55px;
+  height: 25px;
+  margin-top:50px;
+  margin-left:20px;
+  z-index:50;
+}
+
+.switch input {display:none;}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #999999;
+  -webkit-transition: .4s;
+  transition: .4s;
+  z-index:50;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.switch input:checked + .slider {
+  background-color: #2196F3;
+}
+
+.switch input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+.switch input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+#viewDiv{
+  position: absolute;
+  top: 100px;
+  right: 20px;
+  z-index: 50;
+}
+#map {
+  width: 100%;
+  height: 90%;
+  padding: 0;
+  margin: 0;
+  position: relative;
+}
+
+table#flowTable {
+  border-collapse: collapse;
+}
+#flowTable tr {
+  background-color: #eee;
+  border: 1px solid #999999;
+}
+#flowTable tr:hover {
+  background-color: #ccc;
+}
+
+#flowTable th {
+  background-color: #000000;
+}
+#flowTable th, #flowTable td {
+  padding: 3px 5px;
+}
+#flowTable td:hover {
+  cursor: pointer;
+}
+#inboard{
+  z-index:9999;
+}
+#flowTable{
+  position:absolute;
+  right:10px;bottom:60px; overflow-y:scroll;width:150px;
+}
+
+
+#flowTable tr.selected td {
+  background-color:	#696969	;
+  color: #FFFFFF;
+}
+
+#circleScaleRange{
+
+  position: absolute;
+  bottom:15px;
+  left: 0;
+  right: 0;
+  z-index:50;
+}
+#interactLabel{
+
+  position: absolute;
+  top:-20px;
+  left: 0;
+  right: 0;
+  z-index:50;
+}
+#circleScaleRangeLabel{
+
+  position: absolute;
+  bottom:35px;
+  left: 0;
+  right: 0;
+  z-index:50;
+}
+.scaleslider {
+  -webkit-appearance: none;
+  width: 10%;
+  height: 15px;
+  background: #999999;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.scaleslider:hover {
+  opacity: 1;
+}
+
+.scaleslider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  background: #2196F3;
+  cursor: pointer;
+}
+
+.scaleslider::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  background: #2196F3;
+  cursor: pointer;
+}
