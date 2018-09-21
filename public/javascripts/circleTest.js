@@ -20,6 +20,12 @@ var selectedZoneHighlightLayer;
 var check = false; //O to D or D to O
 var selectType = 'Work';
 var circleScale = 3;
+var legendBaseSize = {
+    'Small':20,
+    'Medium':40,
+    'Large':60
+
+}
 require(["esri/renderers/SimpleRenderer","esri/SpatialReference","esri/geometry/Point",
     "esri/geometry/webMercatorUtils","dojo/dom",
     "esri/layers/GraphicsLayer",
@@ -46,6 +52,7 @@ require(["esri/renderers/SimpleRenderer","esri/SpatialReference","esri/geometry/
             Color, domStyle
 ) {
 
+    renewLegend();
     var q = d3.queue();
     q.defer(d3.csv,csvFileTitle.csvFileUrl)
         .defer(d3.csv,csvFileTitle.centroid_csvFileUrl)
@@ -79,7 +86,6 @@ require(["esri/renderers/SimpleRenderer","esri/SpatialReference","esri/geometry/
             }).toArray();
             $(this).addClass("selected");
             selectType=rowItem[0];
-            console.log(selectType)
             redrawCircles(selectZone);
 
         });
@@ -157,37 +163,37 @@ require(["esri/renderers/SimpleRenderer","esri/SpatialReference","esri/geometry/
         // sort = sort.map(x => x.toFixed(2)); //make legend to 2 decimal numbers.
 
         //mouse over event
-        travelZoneLayer.on('mouse-over', function (evt) {
-
-            var graphic = evt.graphic;
-            hoverZone = graphic.attributes.TAZ_New;
-            //generate info window when mousing over the zone
-            var access;
-            if (check === false) {
-                    try{
-                        access = travelMatrix[selectType][selectZone][hoverZone]||0;
-                    }
-                    catch (e) {
-                        access = 0
-                    }
-            }
-            else {
-                    try{
-                        access = travelMatrix[selectType][hoverZone][selectZone]||0;
-                    }
-                    catch (e) {
-                        access = 0
-                    }
-            }
-            map.infoWindow.setTitle("<b>Zone Number: </b>" + hoverZone);
-            if (typeof(access) !== 'undefined') {
-                map.infoWindow.setContent("<b><font size=\"3\"> Value:</font> </b>" + "<font size=\"4\">" + access.toFixed(2) + "</font>");
-            }
-            else {
-                map.infoWindow.setContent("<b><font size=\"3\"> Value:</font> </b>" + "<font size=\"4\">" + 'undefined' + "</font>");
-            }
-            map.infoWindow.show(evt.screenPoint, map.getInfoWindowAnchor(evt.screenPoint));
-        });
+        // travelZoneLayer.on('mouse-over', function (evt) {
+        //
+        //     var graphic = evt.graphic;
+        //     hoverZone = graphic.attributes.TAZ_New;
+        //     //generate info window when mousing over the zone
+        //     var access;
+        //     if (check === false) {
+        //             try{
+        //                 access = travelMatrix[selectType][selectZone][hoverZone]||0;
+        //             }
+        //             catch (e) {
+        //                 access = 0
+        //             }
+        //     }
+        //     else {
+        //             try{
+        //                 access = travelMatrix[selectType][hoverZone][selectZone]||0;
+        //             }
+        //             catch (e) {
+        //                 access = 0
+        //             }
+        //     }
+        //     map.infoWindow.setTitle("<b>Zone Number: </b>" + hoverZone);
+        //     if (typeof(access) !== 'undefined') {
+        //         map.infoWindow.setContent("<b><font size=\"3\"> Value:</font> </b>" + "<font size=\"4\">" + access.toFixed(2) + "</font>");
+        //     }
+        //     else {
+        //         map.infoWindow.setContent("<b><font size=\"3\"> Value:</font> </b>" + "<font size=\"4\">" + 'undefined' + "</font>");
+        //     }
+        //     map.infoWindow.show(evt.screenPoint, map.getInfoWindowAnchor(evt.screenPoint));
+        // });
         function pointToExtent(map, point, toleranceInPixel) {
             var pixelWidth = map.extent.getWidth() / map.width;
             var toleranceInMapCoords = toleranceInPixel * pixelWidth;
@@ -199,12 +205,12 @@ require(["esri/renderers/SimpleRenderer","esri/SpatialReference","esri/geometry/
         }
         $("#interact").click(function(e, parameters) {
             if($("#interact").is(':checked')){
-                $('#interactLabel').html('Origin&nbspCircles')
+                $('#interactLabel').html('Trips&nbspFrom&nbspSelected&nbspZone')
                 check= true;
                 redrawCircles(selectZone)
             }
             else{
-                $('#interactLabel').html('Destination&nbspCircles')
+                $('#interactLabel').html('Trips&nbspTo&nbspSelected&nbspZone')
 
                 check= false;
                 redrawCircles(selectZone)
@@ -243,7 +249,10 @@ require(["esri/renderers/SimpleRenderer","esri/SpatialReference","esri/geometry/
                         continue;
                     }
                     var p = new Point(centroidMatrix[dest][0],centroidMatrix[dest][1]);
-                    var circle = new Graphic(p,destSymbol,{},null);
+                    var attr = {"Value": Math.round(travelMatrix[selectType][selectZone][dest])};
+                    var infoTemplate = new InfoTemplate("Trips Number","Value: ${Value} <br/>");
+                    var circle = new Graphic(p,destSymbol,attr,infoTemplate);
+
                     circleLayer.add(circle);
 
                 }
@@ -272,8 +281,12 @@ require(["esri/renderers/SimpleRenderer","esri/SpatialReference","esri/geometry/
                         if(typeof(centroidMatrix[origin])==='undefined'){
                             continue;
                         }
+
                         var p = new Point(centroidMatrix[origin][0],centroidMatrix[origin][1]);
-                        var circle = new Graphic(p,orginSymbol,{},null);
+                        var attr = {"Value":Math.round(travelMatrix[selectType][origin][selectZone])};
+                        var infoTemplate = new InfoTemplate("Trips Number","Value: ${Value} <br/>");
+
+                        var circle = new Graphic(p,orginSymbol,attr,infoTemplate);
                         circleLayer.add(circle);
 
                     }
@@ -283,22 +296,35 @@ require(["esri/renderers/SimpleRenderer","esri/SpatialReference","esri/geometry/
             }
 
             circleLayer.redraw();
+            circleLayer.on('click',function(e){
+                console.log(e)
+            })
         }
 
 
         $('#circleScaleRange').change(function(e) {
 
             circleScale=this.value
+            renewLegend()
             redrawCircles(selectZone)
+
         });
+
+
     }
 
 
 
 
-
-
 });
+
+function renewLegend(){
+    $('#circleLegendSmallLabel').html(legendBaseSize['Small']*circleScale);
+
+    $('#circleLegendMediumLabel').html(legendBaseSize['Medium']*circleScale);
+
+    $('#circleLegendLargeLabel').html(legendBaseSize['Large']*circleScale);
+}
 function splitDataIntoTravelMatrix(uniqueTravelType,data){
     var dataMatrix = {};
     var travelM = {}
@@ -354,7 +380,6 @@ function splitDataIntoTravelMatrix(uniqueTravelType,data){
             dataMatrix['All'][i][j] = tmp
         }
     }
-    console.log(dataMatrix)
     return dataMatrix;
 }
 function convertCentroidToDict(centroidData){
