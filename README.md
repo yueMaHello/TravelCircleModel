@@ -21,7 +21,7 @@ This is a Nodejs web application using Arcgis Javascript API.It can show the tri
 ## Run
 1. Use terminal/cmd to go to the root of the App './circleTravelModel'. 
 2. Type 'npm start'
-2. Browse 'http://localhost:3032' or http://162.106.202.155:3032/
+2. Browse 'http://localhost:3041' or http://162.106.202.155:3041/
 
 ## Use tips:
 #### Data source:
