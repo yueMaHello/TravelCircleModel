@@ -1,3 +1,5 @@
+//If you changed the csv files' names, attributes' names, you should change 'csvFileTitle' to new values.
+//You shouldn't change other code except this object.
 var csvFileTitle = {
     csvFileUrl:"./data/Origin_Dest_Zones_by_Trip_Purpose_3776.csv",
     centroid_csvFileUrl:"./data/centroid_edmonton.csv",
@@ -11,73 +13,69 @@ var csvFileTitle = {
     dest_y:"Dest_YCoord",
     weight:"Total"
 };
-var travelMatrix ={};
-var centroidMatrix = {};
-var map;
-var selectZone='101';
-var hoverZone;
-var selectedZoneHighlightLayer;
-var check = false; //O to D or D to O
+var travelMatrix ={};//store travel value
+var centroidMatrix = {}; //store centroids of zones
+var map; //store map object
+var selectZone='101'; //default selected zone
+var selectedZoneHighlightLayer; //highlight the selected zone
+var check = false; //'O to D' or 'D to O'
 var selectType = 'Work';
-var circleScale = 3;
+//default value of the slider is 3
+//if you want to change this value, you also need to change the corresponding HTML code
+var circleScale = 3; //It can be changed to some other value. Change it and adjust it if you want.
+//three sample circles show relation between circle size and travel volume
 var legendBaseSize = {
     'Small':20,
     'Medium':40,
     'Large':60
-
-}
+};
 require(["esri/renderers/SimpleRenderer","esri/SpatialReference","esri/geometry/Point",
-    "esri/geometry/webMercatorUtils","dojo/dom",
-    "esri/layers/GraphicsLayer",
-    "esri/geometry/Polyline",
-    "esri/geometry/Extent",
-    "dojo/dom-construct",
-    "esri/tasks/query",
-    "esri/graphic",
-    "dojo/_base/array",
-    "esri/dijit/Popup",
-    "esri/dijit/PopupTemplate",
-    "dojo/dom-class",
-    "esri/dijit/BasemapToggle",
-    "esri/dijit/Legend",
-    "esri/map", "esri/layers/FeatureLayer",
-    "esri/InfoTemplate", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol","esri/symbols/SimpleMarkerSymbol",
-    "esri/renderers/ClassBreaksRenderer",
+    "esri/geometry/webMercatorUtils","dojo/dom","esri/layers/GraphicsLayer",
+    "esri/geometry/Polyline","esri/geometry/Extent","dojo/dom-construct",
+    "esri/tasks/query", "esri/graphic", "dojo/_base/array",
+    "esri/dijit/Popup", "esri/dijit/PopupTemplate", "dojo/dom-class",
+    "esri/dijit/BasemapToggle", "esri/dijit/Legend", "esri/map",
+    "esri/layers/FeatureLayer", "esri/InfoTemplate", "esri/symbols/SimpleFillSymbol",
+    "esri/symbols/SimpleLineSymbol","esri/symbols/SimpleMarkerSymbol", "esri/renderers/ClassBreaksRenderer",
     "esri/Color", "dojo/dom-style", "dojo/domReady!"
-], function(SimpleRenderer,SpatialReference,Point,webMercatorUtils,dom,GraphicsLayer,Polyline,
-            Extent,domConstruct,
-            Query,Graphic,arrayUtils,Popup, PopupTemplate,domClass,BasemapToggle,Legend,Map, FeatureLayer,
-            InfoTemplate, SimpleFillSymbol,SimpleLineSymbol,SimpleMarkerSymbol,
-            ClassBreaksRenderer,
+], function(SimpleRenderer,SpatialReference,Point,
+            webMercatorUtils,dom,GraphicsLayer,
+            Polyline,Extent,domConstruct,
+            Query,Graphic,arrayUtils,
+            Popup, PopupTemplate,domClass,
+            BasemapToggle,Legend,Map,
+            FeatureLayer, InfoTemplate, SimpleFillSymbol,
+            SimpleLineSymbol,SimpleMarkerSymbol, ClassBreaksRenderer,
             Color, domStyle
 ) {
-
     renewLegend();
     var q = d3.queue();
+    //read csv files
+    //after the reading process, it will call brushmap function
     q.defer(d3.csv,csvFileTitle.csvFileUrl)
         .defer(d3.csv,csvFileTitle.centroid_csvFileUrl)
         .await(brushMap);
-
+    //main function
     function brushMap(error,data,centroidData){
         //get a list storing different travel types
         var uniqueTravelType = data.map(data => data.Purpose_Category)
             .filter((value, index, self) => self.indexOf(value) === index);
-
+        //read csv data into specific format
         travelMatrix = splitDataIntoTravelMatrix(uniqueTravelType,data);
         centroidMatrix = convertCentroidToDict(centroidData);
         //dynamic fill the flowTable based on unique travel type
         uniqueTravelType.forEach(function(key){
             if(key === selectType){
                 $("#flowTable").append('<tr class="clickableRow2 selected"><td>'+key+'</td></tr>');
-
             }
             else{
                 $("#flowTable").append('<tr class="clickableRow2"><td>'+key+'</td></tr>');
 
             }
         });
+        //since there is not a travel type called 'All', I have to add it manually
         $("#flowTable").append('<tr class="clickableRow2"><td>All</td></tr>');
-
+        //add clicking event to the rows in the table
         $(".clickableRow2").on("click", function() {
             //highlight selected row
             $("#flowTable tr").removeClass("selected");
@@ -85,7 +83,8 @@ require(["esri/renderers/SimpleRenderer","esri/SpatialReference","esri/geometry/
                 return this.innerHTML;
             }).toArray();
             $(this).addClass("selected");
-            selectType=rowItem[0];
+            selectType=rowItem[0];//read the selected type
+            //redraw circles on the map
             redrawCircles(selectZone);
 
         });
@@ -114,86 +113,51 @@ require(["esri/renderers/SimpleRenderer","esri/SpatialReference","esri/geometry/
             mode: FeatureLayer.MODE_SNAPSHOT,
             outFields: ["*"],
         });
+        //Circle Layer
         var circleLayer=new GraphicsLayer({ id: "selectedZoneCircleLayer" });
-
+        //plot the travel zone layer with some color
         var symbol = new SimpleFillSymbol();
-
         var renderer = new ClassBreaksRenderer(symbol, function(feature){
             return 1
         });
-
         renderer.addBreak(0, 2, new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,new Color([0,0,0,0.3]),1)).setColor(new Color([255, 255, 255,0.30])));
         travelZoneLayer.setRenderer(renderer);
-
-
         map.on('load', function () {
             map.addLayer(travelZoneLayer);
             map.addLayer(lrtFeatureLayer);
-            /*travelZoneLayer.redraw();*/
         });
-        travelZoneLayer.on('click', function (evt) {
-            // console.log(graphic)s
+        //symbol for highlighting the selected zone
+        var highlightSymbol = new SimpleFillSymbol(
+            SimpleFillSymbol.STYLE_SOLID,
+            new SimpleLineSymbol(
+                SimpleLineSymbol.STYLE_SOLID,
+                new Color([0,225,225]), 2
+            ),
+            new Color([0,225,225,0.5])
+        );
 
+        //add clicking event on travelZoneLayer
+        travelZoneLayer.on('click', function (evt) {
             if(typeof(selectedZoneHighlightLayer)!=='undefined'){
                 map.removeLayer(selectedZoneHighlightLayer);
             }
+            //reinitialize
             selectedZoneHighlightLayer = new GraphicsLayer({ id: "selectedZoneHighlightLayer" });
-
+            //read current clicked zone
             selectZone = evt.graphic.attributes.TAZ_New;
             var query = new Query();
             query.geometry = pointToExtent(map, event.mapPoint, 10);
             var deferred = travelZoneLayer.selectFeatures(query,
                 travelZoneLayer.SELECTION_NEW);
-            var highlightSymbol = new SimpleFillSymbol(
-                SimpleFillSymbol.STYLE_SOLID,
-                new SimpleLineSymbol(
-                    SimpleLineSymbol.STYLE_SOLID,
-                    new Color([0,225,225]), 2
-                ),
-                new Color([0,225,225,0.5])
-            );
+
             var graphic = new Graphic(evt.graphic.geometry, highlightSymbol);
             selectedZoneHighlightLayer.add(graphic);
             map.addLayer(selectedZoneHighlightLayer);
+
+            //redraw the circles
             redrawCircles(selectZone);
         });
-
-        // var largestIndividualArray = findRangeForIndividualCalcultion();
-        // sort = Object.values(largestIndividualArray).sort((prev, next) => prev - next); //from smallest to largest
-        // sort = sort.map(x => x.toFixed(2)); //make legend to 2 decimal numbers.
-
-        //mouse over event
-        // travelZoneLayer.on('mouse-over', function (evt) {
-        //
-        //     var graphic = evt.graphic;
-        //     hoverZone = graphic.attributes.TAZ_New;
-        //     //generate info window when mousing over the zone
-        //     var access;
-        //     if (check === false) {
-        //             try{
-        //                 access = travelMatrix[selectType][selectZone][hoverZone]||0;
-        //             }
-        //             catch (e) {
-        //                 access = 0
-        //             }
-        //     }
-        //     else {
-        //             try{
-        //                 access = travelMatrix[selectType][hoverZone][selectZone]||0;
-        //             }
-        //             catch (e) {
-        //                 access = 0
-        //             }
-        //     }
-        //     map.infoWindow.setTitle("<b>Zone Number: </b>" + hoverZone);
-        //     if (typeof(access) !== 'undefined') {
-        //         map.infoWindow.setContent("<b><font size=\"3\"> Value:</font> </b>" + "<font size=\"4\">" + access.toFixed(2) + "</font>");
-        //     }
-        //     else {
-        //         map.infoWindow.setContent("<b><font size=\"3\"> Value:</font> </b>" + "<font size=\"4\">" + 'undefined' + "</font>");
-        //     }
-        //     map.infoWindow.show(evt.screenPoint, map.getInfoWindowAnchor(evt.screenPoint));
-        // });
+        //read user's mouse location
         function pointToExtent(map, point, toleranceInPixel) {
             var pixelWidth = map.extent.getWidth() / map.width;
             var toleranceInMapCoords = toleranceInPixel * pixelWidth;
@@ -203,35 +167,33 @@ require(["esri/renderers/SimpleRenderer","esri/SpatialReference","esri/geometry/
                 point.y + toleranceInMapCoords,
                 map.spatialReference);
         }
+        //the slider to switch between 'trips to the zone' and 'trips from the zone'
         $("#interact").click(function(e, parameters) {
             if($("#interact").is(':checked')){
-                $('#interactLabel').html('Trips&nbspFrom&nbspSelected&nbspZone')
+                $('#interactLabel').html('Trips&nbspFrom&nbspSelected&nbspZone');
                 check= true;
                 redrawCircles(selectZone)
             }
             else{
-                $('#interactLabel').html('Trips&nbspTo&nbspSelected&nbspZone')
-
+                $('#interactLabel').html('Trips&nbspTo&nbspSelected&nbspZone');
                 check= false;
                 redrawCircles(selectZone)
             }
         });
+        //handle redrawing request
         function redrawCircles(selectZone){
             map.removeLayer(circleLayer);
             circleLayer = new GraphicsLayer({ id: "selectedZoneCircleLayer" });
-
-
             // map.infoWindow.setFeatures([deferred]);
-
             map.addLayer(circleLayer);
-            //check === true
+            //check === true. yellow color
+            //Trips from the selected zone
             if(check === false){
                 for(var dest in travelMatrix[selectType][selectZone]){
-                    // console.log(travelMatrix[selectType][selectZone][dest]);
 
                     var destSymbol = new SimpleMarkerSymbol({
                         "color":[255,200,0,200],
-                        "size":travelMatrix[selectType][selectZone][dest]/circleScale,
+                        "size":travelMatrix[selectType][selectZone][dest]/circleScale, // See! the size is different for each circle
                         "angle":0,
                         "xoffset":0,
                         "yoffset":0,
@@ -244,7 +206,7 @@ require(["esri/renderers/SimpleRenderer","esri/SpatialReference","esri/geometry/
                             "style":"esriSLSSolid"
                         }
                     });
-
+                    //clicked to some zone without any data
                     if(typeof(centroidMatrix[dest])==='undefined'){
                         continue;
                     }
@@ -252,13 +214,12 @@ require(["esri/renderers/SimpleRenderer","esri/SpatialReference","esri/geometry/
                     var attr = {"Value": Math.round(travelMatrix[selectType][selectZone][dest])};
                     var infoTemplate = new InfoTemplate("Trips Number","Value: ${Value} <br/>");
                     var circle = new Graphic(p,destSymbol,attr,infoTemplate);
-
                     circleLayer.add(circle);
-
                 }
 
-
             }
+            //check==false. blue circles
+            //Trips to the selected zone
             else{
                 for(var origin in travelMatrix[selectType]){
                     if(typeof(travelMatrix[selectType][origin][selectZone])!=='undefined'){
@@ -294,37 +255,23 @@ require(["esri/renderers/SimpleRenderer","esri/SpatialReference","esri/geometry/
 
                 }
             }
-
             circleLayer.redraw();
-            circleLayer.on('click',function(e){
-                console.log(e)
-            })
         }
-
-
+        //trigger the slider event to adjust the circle size
         $('#circleScaleRange').change(function(e) {
-
-            circleScale=this.value
-            renewLegend()
+            circleScale=this.value;//read current slider value
+            renewLegend();
             redrawCircles(selectZone)
-
         });
-
-
     }
-
-
-
-
 });
-
+//renew that three samle circles' sizes
 function renewLegend(){
     $('#circleLegendSmallLabel').html(legendBaseSize['Small']*circleScale);
-
     $('#circleLegendMediumLabel').html(legendBaseSize['Medium']*circleScale);
-
     $('#circleLegendLargeLabel').html(legendBaseSize['Large']*circleScale);
 }
+//read csv file into desired json format
 function splitDataIntoTravelMatrix(uniqueTravelType,data){
     var dataMatrix = {};
     var travelM = {}
@@ -382,6 +329,7 @@ function splitDataIntoTravelMatrix(uniqueTravelType,data){
     }
     return dataMatrix;
 }
+//read csv into some format
 function convertCentroidToDict(centroidData){
      var centroidDict = {};
      for(var index in centroidData){
