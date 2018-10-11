@@ -1,5 +1,6 @@
 //If you changed the csv files' names, attributes' names, you should change 'csvFileTitle' to new values.
 //You shouldn't change other code except this object.
+//But I recommend you to change your csv files' format and name, letting them exactly the same as ones in './dataexample', instead of changing code here.
 var csvFileTitle = {
     csvFileUrl:"./data/Origin_Dest_Zones_by_Trip_Purpose_3776.csv",
     centroid_csvFileUrl:"./data/centroid_edmonton.csv",
