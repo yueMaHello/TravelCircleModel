@@ -275,7 +275,7 @@ function renewLegend(){
 //read csv file into desired json format
 function splitDataIntoTravelMatrix(uniqueTravelType,data){
     var dataMatrix = {};
-    var travelM = {}
+    var travelM = {};
     for(var i=0;i<uniqueTravelType.length;i++){
         var thisTravelType = uniqueTravelType[i];
         var dataOfThisTravelType = [];
@@ -292,18 +292,15 @@ function splitDataIntoTravelMatrix(uniqueTravelType,data){
     for(var type in travelM){
         dataMatrix[type] = {};
         for(var k in travelM[type]){
-
             if(typeof(dataMatrix[type][travelM[type][k][5]])==='undefined'){
                 var zoneNum = Number(travelM[type][k][5]);
                 if(zoneNum>maxZoneNum){
-                   maxZoneNum = zoneNum
+                   maxZoneNum = zoneNum;
                 }
                 if(zoneNum<minZoneNum){
-                    minZoneNum=zoneNum
+                    minZoneNum=zoneNum;
                 }
-
-                dataMatrix[type][zoneNum]={}
-
+                dataMatrix[type][zoneNum]={};
             }
             dataMatrix[type][travelM[type][k][5]][travelM[type][k][6]] = travelM[type][k][4];
         }
