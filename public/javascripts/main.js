@@ -49,6 +49,7 @@ require(["esri/renderers/SimpleRenderer","esri/SpatialReference","esri/geometry/
             SimpleLineSymbol,SimpleMarkerSymbol, ClassBreaksRenderer,
             Color, domStyle
 ) {
+    //show the legend on the map
     renewLegend();
     var q = d3.queue();
     //read csv files
@@ -273,6 +274,7 @@ function renewLegend(){
     $('#circleLegendLargeLabel').html(legendBaseSize['Large']*circleScale);
 }
 //read csv file into desired json format
+//Also, calculate an aggregation result for 'All' type and store into json object
 function splitDataIntoTravelMatrix(uniqueTravelType,data){
     var dataMatrix = {};
     var travelM = {};
