@@ -294,7 +294,7 @@ function splitDataIntoTravelMatrix(uniqueTravelType,data){
         for(var k in travelM[type]){
 
             if(typeof(dataMatrix[type][travelM[type][k][5]])==='undefined'){
-                var zoneNum = Number(travelM[type][k][5])
+                var zoneNum = Number(travelM[type][k][5]);
                 if(zoneNum>maxZoneNum){
                    maxZoneNum = zoneNum
                 }
@@ -308,9 +308,9 @@ function splitDataIntoTravelMatrix(uniqueTravelType,data){
             dataMatrix[type][travelM[type][k][5]][travelM[type][k][6]] = travelM[type][k][4];
         }
     }
-    dataMatrix['All'] = {}
+    dataMatrix['All'] = {};
     for(var i = minZoneNum;i<maxZoneNum;i++){
-        dataMatrix['All'][i]={}
+        dataMatrix['All'][i]={};
 
         for(var j=minZoneNum;j<maxZoneNum;j++){
 
