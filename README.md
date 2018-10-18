@@ -1,5 +1,6 @@
 # Travel Circle Model
-This is a Nodejs web application using Arcgis Javascript API.It can show the trips information for each travel zone according to different purposes. After the user clicks on a travel zone on the map, a groups of circles will show on the map. Size of circles shows the amount of trips.
+The purpose of this application is to show an overview of trips amount of each travel zone. The user can know which zone is busier and how the transportation should be optimized based on the trips amount. The App can show the travel amount from selected zone to any other zones based on different travel purpose, and it also can show the trips from other zones to the selected zone as well.
+Since the variance of the dataset is quite large, it is not proper to use a single scale for all selections. So a range slider is designed so that the user can freely adjust the size of circles.  
 
 ## Set Up
 #### From Github:
