@@ -24,7 +24,7 @@ Since the variance of the dataset is quite large, it is not proper to use a sing
 2. Type 'npm start'
 2. Browse 'http://localhost:3041' or http://162.106.202.155:3041/
 
-## Use tips:
+## Tips:
 #### Data source:
  1.The data source:'Origin_Dest_Zones_by_Trips_Purpose_3776.csv' is provided by Juhong. It is exactly the same as the one using in 'Travel Cluster Tool App'. If you want to replace the file with a new one, you would be better to have the same format, including file name and column titles; otherwise you have to change code in main.js.
 The coordinates in the file is coded by EPSG 3776, not 4326.  
