@@ -28,6 +28,7 @@ Since the variance of the dataset is quite large, it is not proper to use a sing
 #### Data source:
 1.The data source:'Origin_Dest_Zones_by_Trips_Purpose_3776.csv' is provided by Juhong. It is exactly the same as the one using in 'Travel Cluster Tool App'. If you want to replace the file with a new one, you would be better to have the same format, including file name and column titles; otherwise you have to change code in main.js.
 The coordinates in the file is coded by EPSG 3776, not 4326.
+
 2. If your travel zone layer has already updated, you will need to change 'centroids_edmonton.csv' as well.
 #### If you want to update the TravelZoneLayer shape file:
  1. The map layer is not stored in localhost. It is stored in the arcgis online server.
