@@ -28,7 +28,7 @@ h1{
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #999999;
+  background-color: #2196F3;
   -webkit-transition: .4s;
   transition: .4s;
   z-index:50;
@@ -67,7 +67,7 @@ h1{
 }
 #map {
   width: 100%;
-  height: 90%;
+  height: 95%;
   padding: 0;
   margin: 0;
   position: relative;
@@ -85,7 +85,7 @@ table#flowTable {
 }
 
 #flowTable th {
-  background-color: #000000;
+  background-color: #ccc;
 }
 #flowTable th, #flowTable td {
   padding: 3px 5px;

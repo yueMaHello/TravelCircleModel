@@ -20,10 +20,10 @@ var map; //store map object
 var selectZone='101'; //default selected zone
 var selectedZoneHighlightLayer; //highlight the selected zone
 var check = false; //'O to D' or 'D to O'
-var selectType = 'Work';
+var selectType = 'W';
 //default value of the slider is 3
 //if you want to change this value, you also need to change the corresponding HTML code
-var circleScale = 3; //It can be changed to some other value. Change it and adjust it if you want.
+var circleScale = $('#circleScaleRange').val(); //It can be changed to some other value. Change it and adjust it if you want.
 //three sample circles show relation between circle size and travel volume
 var legendBaseSize = {
     'Small':20,
@@ -67,6 +67,7 @@ require(["esri/renderers/SimpleRenderer","esri/SpatialReference","esri/geometry/
         centroidMatrix = convertCentroidToDict(centroidData);
         //dynamic fill the flowTable based on unique travel type
         uniqueTravelType.forEach(function(key){
+
             if(key === selectType){
                 $("#flowTable").append('<tr class="clickableRow2 selected"><td>'+key+'</td></tr>');
             }
@@ -110,6 +111,12 @@ require(["esri/renderers/SimpleRenderer","esri/SpatialReference","esri/geometry/
             outFields: ["*"],
 
         });
+        //hydro layer
+        var HydroLayer = new FeatureLayer("https://services8.arcgis.com/FCQ1UtL7vfUUEwH7/ArcGIS/rest/services/edmontonHydro/FeatureServer/0", {
+            mode: FeatureLayer.MODE_SNAPSHOT,
+            outFields: ["*"],
+
+        });
         //LRT layer
         var lrtFeatureLayer = new FeatureLayer("https://services8.arcgis.com/FCQ1UtL7vfUUEwH7/arcgis/rest/services/LRT/FeatureServer/0", {
             mode: FeatureLayer.MODE_SNAPSHOT,
@@ -127,6 +134,7 @@ require(["esri/renderers/SimpleRenderer","esri/SpatialReference","esri/geometry/
         map.on('load', function () {
             map.addLayer(travelZoneLayer);
             map.addLayer(lrtFeatureLayer);
+            map.addLayer(HydroLayer);
         });
         //symbol for highlighting the selected zone
         var highlightSymbol = new SimpleFillSymbol(
@@ -147,6 +155,7 @@ require(["esri/renderers/SimpleRenderer","esri/SpatialReference","esri/geometry/
             selectedZoneHighlightLayer = new GraphicsLayer({ id: "selectedZoneHighlightLayer" });
             //read current clicked zone
             selectZone = evt.graphic.attributes.TAZ_New;
+            console.log(selectZone);
             var query = new Query();
             query.geometry = pointToExtent(map, event.mapPoint, 10);
             var deferred = travelZoneLayer.selectFeatures(query,
@@ -253,8 +262,6 @@ require(["esri/renderers/SimpleRenderer","esri/SpatialReference","esri/geometry/
                         circleLayer.add(circle);
 
                     }
-
-
                 }
             }
             circleLayer.redraw();
