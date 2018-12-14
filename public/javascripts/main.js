@@ -14,6 +14,8 @@ var csvFileTitle = {
     dest_y:"Dest_YCoord",
     weight:"Total"
 };
+//the ID attribute's name of travel zone layer
+var travelZoneLayerIDTitle = 'TAZ_New';
 var travelMatrix ={};//store travel value
 var centroidMatrix = {}; //store centroids of zones
 var map; //store map object
@@ -154,7 +156,7 @@ require(["esri/renderers/SimpleRenderer","esri/SpatialReference","esri/geometry/
             //reinitialize
             selectedZoneHighlightLayer = new GraphicsLayer({ id: "selectedZoneHighlightLayer" });
             //read current clicked zone
-            selectZone = evt.graphic.attributes.TAZ_New;
+            selectZone = evt.graphic.attributes[travelZoneLayerIDTitle];
             console.log(selectZone);
             var query = new Query();
             query.geometry = pointToExtent(map, event.mapPoint, 10);
@@ -340,7 +342,7 @@ function splitDataIntoTravelMatrix(uniqueTravelType,data){
 function convertCentroidToDict(centroidData){
      var centroidDict = {};
      for(var index in centroidData){
-         centroidDict[centroidData[index].TAZ_New] = [centroidData[index].x,centroidData[index].y]
+         centroidDict[centroidData[index][travelZoneLayerIDTitle]] = [centroidData[index].x,centroidData[index].y]
      }
     return centroidDict;
 }
