@@ -22,7 +22,7 @@ Since the variance of the dataset is quite large, it is not proper to use a sing
 ## Run
 1. Use terminal/cmd to go to the root of the App './circleTravelModel'. 
 2. Type 'npm start'
-2. Browse 'http://localhost:3041' or http://162.106.202.155:3041/
+2. Browse 'http://localhost:3041' 
 
 ## Tips:
 #### Data source:
